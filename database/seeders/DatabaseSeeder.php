@@ -1,0 +1,34 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // User::factory(10)->create();
+        $this->call([
+            SystemModulesSeeder::class,
+            PermissionsSeeder::class,
+            SetupRolesAndPermissionsSeeder::class, // Handles all roles and permissions setup
+            TenantsSeeder::class,
+            RegionsSeeder::class,
+            LanguagesSeeder::class,
+            LocalesSeeder::class,
+            CountriesSeeder::class,
+            UsersSeeder::class,
+            PatientSeeder::class,
+            MedicalHistorySeeder::class,
+         ]);
+
+      
+
+    }
+}

@@ -1,0 +1,944 @@
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Versión del servidor:         8.4.3 - MySQL Community Server - GPL
+-- SO del servidor:              Win64
+-- HeidiSQL Versión:             12.8.0.6908
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+-- Volcando estructura de base de datos para blog_db
+DROP DATABASE IF EXISTS `blog_db`;
+CREATE DATABASE IF NOT EXISTS `blog_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `blog_db`;
+
+-- Volcando estructura para tabla blog_db.appointments
+DROP TABLE IF EXISTS `appointments`;
+CREATE TABLE IF NOT EXISTS `appointments` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `patient_id` int unsigned NOT NULL,
+  `dentist_id` bigint unsigned NOT NULL,
+  `appointment_date` date NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Scheduled',
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_by` bigint unsigned DEFAULT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `appointments_slug_unique` (`slug`),
+  KEY `appointments_patient_id_foreign` (`patient_id`),
+  KEY `appointments_dentist_id_foreign` (`dentist_id`),
+  KEY `appointments_created_by_foreign` (`created_by`),
+  KEY `appointments_updated_by_foreign` (`updated_by`),
+  KEY `appointments_deleted_by_foreign` (`deleted_by`),
+  CONSTRAINT `appointments_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `appointments_deleted_by_foreign` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `appointments_dentist_id_foreign` FOREIGN KEY (`dentist_id`) REFERENCES `dentists` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `appointments_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `appointments_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.appointments: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.cache
+DROP TABLE IF EXISTS `cache`;
+CREATE TABLE IF NOT EXISTS `cache` (
+  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.cache: ~1 rows (aproximadamente)
+REPLACE INTO `cache` (`key`, `value`, `expiration`) VALUES
+	('laravel-cache-spatie.permission.cache', 'a:3:{s:5:"alias";a:6:{s:1:"a";s:2:"id";s:1:"b";s:4:"name";s:1:"c";s:10:"guard_name";s:1:"r";s:5:"roles";s:1:"j";s:4:"slug";s:1:"k";s:11:"description";}s:11:"permissions";a:39:{i:0;a:4:{s:1:"a";i:1;s:1:"b";s:14:"countries.view";s:1:"c";s:3:"web";s:1:"r";a:3:{i:0;i:1;i:1;i:2;i:2;i:3;}}i:1;a:4:{s:1:"a";i:2;s:1:"b";s:16:"countries.create";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:2;a:4:{s:1:"a";i:3;s:1:"b";s:14:"countries.edit";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:3;a:4:{s:1:"a";i:4;s:1:"b";s:16:"countries.delete";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:4;a:4:{s:1:"a";i:5;s:1:"b";s:16:"countries.export";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:5;a:4:{s:1:"a";i:6;s:1:"b";s:18:"countries.edit_all";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:6;a:4:{s:1:"a";i:7;s:1:"b";s:10:"users.view";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:7;a:4:{s:1:"a";i:8;s:1:"b";s:12:"users.create";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:8;a:4:{s:1:"a";i:9;s:1:"b";s:10:"users.edit";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:9;a:4:{s:1:"a";i:10;s:1:"b";s:12:"users.delete";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:10;a:4:{s:1:"a";i:11;s:1:"b";s:12:"users.export";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:11;a:4:{s:1:"a";i:12;s:1:"b";s:14:"users.edit_all";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:12;a:4:{s:1:"a";i:13;s:1:"b";s:14:"companies.view";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:13;a:4:{s:1:"a";i:14;s:1:"b";s:16:"companies.create";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:14;a:4:{s:1:"a";i:15;s:1:"b";s:14:"companies.edit";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:15;a:4:{s:1:"a";i:16;s:1:"b";s:16:"companies.delete";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:16;a:4:{s:1:"a";i:17;s:1:"b";s:16:"companies.export";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:17;a:4:{s:1:"a";i:18;s:1:"b";s:18:"companies.edit_all";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:18;a:4:{s:1:"a";i:19;s:1:"b";s:14:"languages.view";s:1:"c";s:3:"web";s:1:"r";a:3:{i:0;i:1;i:1;i:2;i:2;i:4;}}i:19;a:4:{s:1:"a";i:20;s:1:"b";s:16:"languages.create";s:1:"c";s:3:"web";s:1:"r";a:3:{i:0;i:1;i:1;i:2;i:2;i:4;}}i:20;a:4:{s:1:"a";i:21;s:1:"b";s:14:"languages.edit";s:1:"c";s:3:"web";s:1:"r";a:3:{i:0;i:1;i:1;i:2;i:2;i:4;}}i:21;a:4:{s:1:"a";i:22;s:1:"b";s:16:"languages.delete";s:1:"c";s:3:"web";s:1:"r";a:3:{i:0;i:1;i:1;i:2;i:2;i:4;}}i:22;a:4:{s:1:"a";i:23;s:1:"b";s:16:"languages.export";s:1:"c";s:3:"web";s:1:"r";a:3:{i:0;i:1;i:1;i:2;i:2;i:4;}}i:23;a:4:{s:1:"a";i:24;s:1:"b";s:18:"languages.edit_all";s:1:"c";s:3:"web";s:1:"r";a:3:{i:0;i:1;i:1;i:2;i:2;i:4;}}i:24;a:4:{s:1:"a";i:25;s:1:"b";s:12:"tenants.view";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:25;a:4:{s:1:"a";i:26;s:1:"b";s:14:"tenants.create";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:26;a:4:{s:1:"a";i:27;s:1:"b";s:12:"tenants.edit";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:27;a:4:{s:1:"a";i:28;s:1:"b";s:14:"tenants.delete";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:28;a:4:{s:1:"a";i:29;s:1:"b";s:14:"tenants.export";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:29;a:4:{s:1:"a";i:30;s:1:"b";s:16:"tenants.edit_all";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:30;a:4:{s:1:"a";i:31;s:1:"b";s:12:"regions.view";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:31;a:4:{s:1:"a";i:32;s:1:"b";s:14:"regions.create";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:32;a:4:{s:1:"a";i:33;s:1:"b";s:12:"regions.edit";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:33;a:4:{s:1:"a";i:34;s:1:"b";s:14:"regions.delete";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:34;a:4:{s:1:"a";i:35;s:1:"b";s:14:"regions.export";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:35;a:4:{s:1:"a";i:36;s:1:"b";s:16:"regions.edit_all";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:36;a:4:{s:1:"a";i:37;s:1:"b";s:14:"countries.show";s:1:"c";s:3:"web";s:1:"r";a:3:{i:0;i:1;i:1;i:2;i:2;i:3;}}i:37;a:4:{s:1:"a";i:38;s:1:"b";s:10:"users.show";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}i:38;a:4:{s:1:"a";i:39;s:1:"b";s:14:"companies.show";s:1:"c";s:3:"web";s:1:"r";a:2:{i:0;i:1;i:1;i:2;}}}s:5:"roles";a:4:{i:0;a:5:{s:1:"a";i:1;s:1:"b";s:5:"super";s:1:"j";N;s:1:"k";s:24:"Super Admin: Full Access";s:1:"c";s:3:"web";}i:1;a:5:{s:1:"a";i:2;s:1:"b";s:5:"admin";s:1:"j";N;s:1:"k";s:20:"Tenant Administrator";s:1:"c";s:3:"web";}i:2;a:5:{s:1:"a";i:3;s:1:"b";s:4:"user";s:1:"j";N;s:1:"k";s:18:"User with profiles";s:1:"c";s:3:"web";}i:3;a:5:{s:1:"a";i:4;s:1:"b";s:16:"language_manager";s:1:"j";N;s:1:"k";s:24:"Manages system languages";s:1:"c";s:3:"web";}}}', 1762443644);
+
+-- Volcando estructura para tabla blog_db.cache_locks
+DROP TABLE IF EXISTS `cache_locks`;
+CREATE TABLE IF NOT EXISTS `cache_locks` (
+  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `owner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.cache_locks: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.countries
+DROP TABLE IF EXISTS `countries`;
+CREATE TABLE IF NOT EXISTS `countries` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `region_id` bigint unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `iso_code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `currency` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `timezone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `default_locale_id` bigint unsigned NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `countries_slug_unique` (`slug`),
+  KEY `countries_region_id_foreign` (`region_id`),
+  KEY `countries_default_locale_id_foreign` (`default_locale_id`),
+  CONSTRAINT `countries_default_locale_id_foreign` FOREIGN KEY (`default_locale_id`) REFERENCES `locales` (`id`),
+  CONSTRAINT `countries_region_id_foreign` FOREIGN KEY (`region_id`) REFERENCES `regions` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.countries: ~5 rows (aproximadamente)
+REPLACE INTO `countries` (`id`, `slug`, `region_id`, `name`, `iso_code`, `currency`, `timezone`, `default_locale_id`, `is_active`, `created_by`, `deleted_by`, `deleted_description`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	(1, 'dmK1kROtPkoTEfmJz3vxjl', 1, 'Perú', 'PE', 'PEN', 'America/Lima', 1, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(2, 'grkrepwwkEJXErp0V9cGnI', 1, 'Venezuela', 'VE', 'VES', 'America/Caracas', 2, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(3, 'OH6dSUh5LzEquczazH1mgD', 1, 'Brasil', 'BR', 'BRL', 'America/Sao_Paulo', 3, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(4, 'Pu52eU80ipjwQ9xrsPGP8k', 2, 'Estados Unidos', 'US', 'USD', 'America/New_York', 4, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(5, 'kGIkjJl25QGdUKfeHf6qEs', 1, 'Chile', 'CL', 'CLP', 'America/Santiago', 5, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL);
+
+-- Volcando estructura para tabla blog_db.country_languages
+DROP TABLE IF EXISTS `country_languages`;
+CREATE TABLE IF NOT EXISTS `country_languages` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `country_id` bigint unsigned NOT NULL,
+  `language_id` bigint unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `country_languages_country_id_foreign` (`country_id`),
+  KEY `country_languages_language_id_foreign` (`language_id`),
+  CONSTRAINT `country_languages_country_id_foreign` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `country_languages_language_id_foreign` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.country_languages: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.dentists
+DROP TABLE IF EXISTS `dentists`;
+CREATE TABLE IF NOT EXISTS `dentists` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NOT NULL,
+  `license_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_by` bigint unsigned DEFAULT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `dentists_license_number_unique` (`license_number`),
+  UNIQUE KEY `dentists_slug_unique` (`slug`),
+  KEY `dentists_user_id_foreign` (`user_id`),
+  KEY `dentists_created_by_foreign` (`created_by`),
+  KEY `dentists_updated_by_foreign` (`updated_by`),
+  KEY `dentists_deleted_by_foreign` (`deleted_by`),
+  CONSTRAINT `dentists_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `dentists_deleted_by_foreign` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `dentists_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `dentists_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.dentists: ~1 rows (aproximadamente)
+REPLACE INTO `dentists` (`id`, `user_id`, `license_number`, `phone`, `is_active`, `slug`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`, `deleted_by`, `deleted_description`) VALUES
+	(1, 14, 'N-001001', '111111111', 1, 'fenix-6909ca4155e6f', '2025-11-04 14:41:21', '2025-11-04 14:41:21', NULL, 3, NULL, NULL, NULL);
+
+-- Volcando estructura para tabla blog_db.downloads
+DROP TABLE IF EXISTS `downloads`;
+CREATE TABLE IF NOT EXISTS `downloads` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('pdf','excel','word') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `disk` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'local',
+  `user_id` bigint unsigned NOT NULL,
+  `status` enum('pending','processing','ready','expired','failed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `error_message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `downloaded_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `downloads_slug_unique` (`slug`),
+  KEY `downloads_user_id_foreign` (`user_id`),
+  CONSTRAINT `downloads_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.downloads: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.failed_jobs
+DROP TABLE IF EXISTS `failed_jobs`;
+CREATE TABLE IF NOT EXISTS `failed_jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.failed_jobs: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.jobs
+DROP TABLE IF EXISTS `jobs`;
+CREATE TABLE IF NOT EXISTS `jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attempts` tinyint unsigned NOT NULL,
+  `reserved_at` int unsigned DEFAULT NULL,
+  `available_at` int unsigned NOT NULL,
+  `created_at` int unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobs_queue_index` (`queue`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.jobs: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.job_batches
+DROP TABLE IF EXISTS `job_batches`;
+CREATE TABLE IF NOT EXISTS `job_batches` (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_jobs` int NOT NULL,
+  `pending_jobs` int NOT NULL,
+  `failed_jobs` int NOT NULL,
+  `failed_job_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `cancelled_at` int DEFAULT NULL,
+  `created_at` int NOT NULL,
+  `finished_at` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.job_batches: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.languages
+DROP TABLE IF EXISTS `languages`;
+CREATE TABLE IF NOT EXISTS `languages` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `iso_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `languages_slug_unique` (`slug`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.languages: ~4 rows (aproximadamente)
+REPLACE INTO `languages` (`id`, `slug`, `name`, `iso_code`, `is_active`, `created_by`, `deleted_by`, `deleted_description`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	(1, 'CQvNJoP1jYqP0aA5EW32zn', 'Spanish', 'es', 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(2, '7APj5RE0NpDckDnkmwFEbk', 'English', 'en', 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(3, 'ADFhVTNNBN8AMgujDZj0Hj', 'Português', 'pt', 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(4, 'JtVsaCKG1WnBAAkICT44lv', 'French', 'fr', 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL);
+
+-- Volcando estructura para tabla blog_db.locales
+DROP TABLE IF EXISTS `locales`;
+CREATE TABLE IF NOT EXISTS `locales` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `language_id` bigint unsigned NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `locales_slug_unique` (`slug`),
+  KEY `locales_language_id_foreign` (`language_id`),
+  CONSTRAINT `locales_language_id_foreign` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.locales: ~5 rows (aproximadamente)
+REPLACE INTO `locales` (`id`, `slug`, `code`, `name`, `language_id`, `is_active`, `created_by`, `deleted_by`, `deleted_description`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	(1, '10LkuR0iqK6KgCYn5rXIcg', 'es_PE', 'Español (Perú)', 1, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(2, 'R7sKG9mJe0FtkQtkfQLBOj', 'es_VE', 'Español (Venezuela)', 1, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(3, '3vqW95QcZ12f5HZNTZWm8g', 'pt_BR', 'Português (Brasil)', 3, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(4, 'qqRVCtzwCtrQRFBHej1Z3J', 'en_US', 'English (US)', 2, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(5, 'u0KD2geApSaQVMU9fl3P1m', 'es_CL', 'Español (Chile)', 1, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL);
+
+-- Volcando estructura para tabla blog_db.medical_histories
+DROP TABLE IF EXISTS `medical_histories`;
+CREATE TABLE IF NOT EXISTS `medical_histories` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `patient_id` int unsigned NOT NULL,
+  `dentist_id` bigint unsigned NOT NULL,
+  `consultation_date` datetime NOT NULL,
+  `chief_complaint` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `current_illness` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `previous_treatments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `allergies` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `medications` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `chronic_diseases` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `vital_signs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `diagnosis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `treatment_plan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `observations` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_by` bigint unsigned DEFAULT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `medical_histories_slug_unique` (`slug`),
+  KEY `medical_histories_patient_id_foreign` (`patient_id`),
+  KEY `medical_histories_dentist_id_foreign` (`dentist_id`),
+  KEY `medical_histories_created_by_foreign` (`created_by`),
+  KEY `medical_histories_updated_by_foreign` (`updated_by`),
+  KEY `medical_histories_deleted_by_foreign` (`deleted_by`),
+  CONSTRAINT `medical_histories_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `medical_histories_deleted_by_foreign` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `medical_histories_dentist_id_foreign` FOREIGN KEY (`dentist_id`) REFERENCES `dentists` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `medical_histories_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `medical_histories_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.medical_histories: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.migrations
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE IF NOT EXISTS `migrations` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.migrations: ~32 rows (aproximadamente)
+REPLACE INTO `migrations` (`id`, `migration`, `batch`) VALUES
+	(1, '2025_01_01_000001_create_cache_table', 1),
+	(2, '2025_01_01_000002_create_jobs_table', 1),
+	(3, '2025_09_18_090001_create_tenants_table', 1),
+	(4, '2025_09_18_090006_create_tenant_countries_table', 1),
+	(5, '2025_09_18_090021_create_regions_table', 1),
+	(6, '2025_09_18_090150_create_languages_table', 1),
+	(7, '2025_09_18_090436_create_locales_table', 1),
+	(8, '2025_09_18_090437_create_countries_table', 1),
+	(9, '2025_09_18_093342_create_country_languages_table', 1),
+	(10, '2025_09_18_093438_create_settings_table', 1),
+	(11, '2025_09_18_093438_create_users_table', 1),
+	(12, '2025_09_18_093509_create_permission_tables', 1),
+	(13, '2025_09_18_093709__create_downloads_table', 1),
+	(14, '2025_09_20_230937_create_system_modules_table', 1),
+	(15, '2025_09_24_070056_create_personal_access_tokens_table', 1),
+	(16, '2025_09_24_230904_add_api_token_to_tenants_table', 1),
+	(17, '2025_10_14_033502_add_slug_to_roles_table', 1),
+	(18, '2025_10_14_052447_add_deleted_at_to_roles_table', 1),
+	(19, '2025_11_04_055457_create_patients_table', 1),
+	(20, '2025_11_04_061431_add_photo_to_patients_table', 2),
+	(22, '2025_11_04_074918_create_dentists_table', 3),
+	(23, '2025_11_04_075823_create_appointments_table', 4),
+	(24, '2025_11_04_080954_add_standard_fields_to_patients_table', 5),
+	(25, '2025_11_04_081000_create_treatments_table', 6),
+	(26, '2025_11_04_081100_create_procedures_table', 6),
+	(27, '2025_11_04_081200_create_medical_histories_table', 6),
+	(28, '2025_11_04_235153_create_procedures_table', 6),
+	(29, '2025_11_04_235505_create_treatments_table', 6),
+	(30, '2025_11_05_001045_create_medical_histories_table_and_move_data_from_patients', 6),
+	(31, '2025_11_05_025344_create_specialties_table', 7),
+	(32, '2025_11_05_025345_create_dentist_specialties_table', 7),
+	(33, '2025_11_05_031631_remove_specialty_column_from_dentists_table', 7);
+
+-- Volcando estructura para tabla blog_db.model_has_permissions
+DROP TABLE IF EXISTS `model_has_permissions`;
+CREATE TABLE IF NOT EXISTS `model_has_permissions` (
+  `permission_id` bigint unsigned NOT NULL,
+  `model_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint unsigned NOT NULL,
+  PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
+  KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`),
+  CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.model_has_permissions: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.model_has_roles
+DROP TABLE IF EXISTS `model_has_roles`;
+CREATE TABLE IF NOT EXISTS `model_has_roles` (
+  `role_id` bigint unsigned NOT NULL,
+  `model_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint unsigned NOT NULL,
+  PRIMARY KEY (`role_id`,`model_id`,`model_type`),
+  KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`),
+  CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.model_has_roles: ~2 rows (aproximadamente)
+REPLACE INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
+	(1, 'App\\Models\\User', 3),
+	(5, 'App\\Models\\User', 14);
+
+-- Volcando estructura para tabla blog_db.password_reset_tokens
+DROP TABLE IF EXISTS `password_reset_tokens`;
+CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.password_reset_tokens: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.patients
+DROP TABLE IF EXISTS `patients`;
+CREATE TABLE IF NOT EXISTS `patients` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tenant_id` bigint unsigned NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lastname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `photo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `dni` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sex` enum('M','F','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `birth_date` date DEFAULT NULL,
+  `age` int DEFAULT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `occupation` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `marital_status` enum('Single','Married','Divorced','Widowed','Civil Union') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `blood_type` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emergency_contact_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emergency_contact_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `allergies` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `chronic_diseases` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `medications` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `surgical_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `family_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `observations` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `locale_id` bigint unsigned DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_by` bigint unsigned DEFAULT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `patients_dni_unique` (`dni`),
+  UNIQUE KEY `patients_slug_unique` (`slug`),
+  KEY `patients_tenant_id_foreign` (`tenant_id`),
+  KEY `patients_locale_id_foreign` (`locale_id`),
+  KEY `patients_created_by_foreign` (`created_by`),
+  KEY `patients_updated_by_foreign` (`updated_by`),
+  KEY `patients_deleted_by_foreign` (`deleted_by`),
+  CONSTRAINT `patients_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `patients_deleted_by_foreign` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `patients_locale_id_foreign` FOREIGN KEY (`locale_id`) REFERENCES `locales` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `patients_tenant_id_foreign` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`),
+  CONSTRAINT `patients_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.patients: ~11 rows (aproximadamente)
+REPLACE INTO `patients` (`id`, `slug`, `tenant_id`, `name`, `lastname`, `photo`, `is_active`, `dni`, `sex`, `birth_date`, `age`, `phone`, `email`, `address`, `occupation`, `marital_status`, `blood_type`, `emergency_contact_name`, `emergency_contact_phone`, `allergies`, `chronic_diseases`, `medications`, `surgical_history`, `family_history`, `observations`, `locale_id`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`, `deleted_by`, `deleted_description`) VALUES
+	(1, 'ashleigh-hickle-6909b7152b4a9', 1, 'Joseroberto', 'Gomez', NULL, 1, '52384300', 'F', '1989-08-19', 59, '947756696', 'joseroberto@paciente.com', 'Av. Arequipa 251, La Molina, Lima', 'Policia', 'Married', 'A+', 'Dr. Devon Torp DVM', '+51 999999994', 'NO', 'NO', 'NO', NULL, 'Adipisci est eum voluptate aut iure.', NULL, 1, '2025-11-04 06:01:00', '2025-11-04 09:23:34', NULL, NULL, 3, NULL, NULL),
+	(2, 'jackeline-stiedemann-6909b7153304b', 1, 'Sofia', 'Sanchez', NULL, 1, '52840948', 'Other', '1974-03-09', 28, '986633724', 'nhoeger@example.net', 'Av. Javier Prado 974, Lince, Lima', 'Algorithm Developer', 'Divorced', 'O-', 'Anjali Runte', '+1.323.785.1623', NULL, 'Fugit non explicabo eos pariatur minima ut et.', 'Voluptatem perspiciatis velit earum numquam sed incidunt eius.', NULL, 'Aut ea corrupti architecto provident.', 'Aut amet cumque explicabo voluptas. Est voluptatem velit quo vel consectetur deserunt voluptatem. Earum quia sint sunt ab porro. Dolor dignissimos debitis vel fugit. Accusantium molestias excepturi dignissimos et eaque.', 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(3, 'sarah-koepp-6909b71540b25', 1, 'Ana', 'Flores', NULL, 1, '94628868', 'F', '1993-06-25', 19, '937413829', 'gutmann.erling@example.net', 'Av. Salaverry 845, Lince, Lima', 'Janitorial Supervisor', 'Divorced', 'A-', 'Kurt Jast', '+1-253-426-2207', NULL, 'Voluptatem dolorem voluptates aut ea.', 'Eaque aut non maiores tempora itaque nam occaecati.', 'Qui occaecati ab nisi animi enim asperiores omnis.', NULL, NULL, 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(4, 'martine-cronin-6909b71541867', 1, 'Carlos', 'Perez', NULL, 1, '57807409', 'M', '1975-01-17', 32, '983568811', 'rebeka39@example.org', 'Calle Las Begonias 433, Miraflores, Lima', 'Architectural Drafter', 'Widowed', 'AB-', 'Viola Ankunding DVM', '+13197384349', NULL, NULL, 'Illo at recusandae autem velit saepe sunt ut.', 'Consequuntur eveniet odit ut magni possimus a.', NULL, 'Blanditiis aut nesciunt dolores nobis. Suscipit aut quaerat sunt quo autem qui facere. Dolorem voluptatibus illo incidunt et natus.', 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(5, 'robert-kilback-6909b7154200c', 1, 'Ana', 'Gomez', NULL, 1, '73123633', 'Other', '1975-10-04', 42, '998400244', 'ebert.orpha@example.net', 'Jr. de la Union 163, San Isidro, Lima', 'New Accounts Clerk', 'Single', 'AB+', 'Furman Marks III', '1-754-806-2166', 'Et placeat voluptatem quia autem vel ut incidunt.', 'Sunt aliquam ea possimus inventore placeat et.', 'Vel ipsum ea voluptatibus itaque explicabo et sit.', NULL, NULL, NULL, 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(6, 'mandy-gislason-6909b7154291f', 1, 'Maria', 'Rodriguez', NULL, 1, '42203523', 'F', '1996-01-08', 19, '926454555', 'rstehr@example.net', 'Av. Larco 896, La Molina, Lima', 'Pest Control Worker', 'Single', 'AB+', 'Lelia Wolff', '+1-520-932-5384', NULL, 'Modi aut est a commodi esse maxime animi.', NULL, 'Sed dolor voluptas nihil aut aut rerum.', NULL, NULL, 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(7, 'maudie-green-6909b71542fe4', 1, 'Carlos', 'Sanchez', NULL, 1, '54507292', 'F', '1992-05-15', 49, '920826059', 'camryn.daniel@example.com', 'Av. Larco 315, Barranco, Lima', 'RN', 'Divorced', 'A-', 'Felix Hodkiewicz', '1-267-692-8314', 'Dolor accusantium aliquid est qui soluta nam corporis.', 'Ut harum quia quas magnam delectus at accusamus.', NULL, NULL, 'Rerum vero ut exercitationem aut.', 'Non optio non odio laboriosam impedit voluptates. Est est pariatur aut ad ut voluptatem facilis. Provident qui rem eaque ducimus iusto occaecati et. Iste sed reiciendis voluptatem quaerat et.', 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(8, 'eriberto-ledner-6909b715436db', 1, 'Luis', 'Diaz', NULL, 1, '33109220', 'M', '1973-09-17', 40, '980048687', 'raynor.gillian@example.net', 'Calle Las Begonias 341, San Isidro, Lima', 'Rail Transportation Worker', 'Divorced', 'A+', 'Micaela Mertz II', '(217) 978-5092', NULL, 'Explicabo distinctio assumenda eligendi iusto non accusamus cupiditate cum.', 'Voluptates aut et qui fugit omnis aut.', NULL, 'Perspiciatis illo quas voluptas nesciunt et nobis sit.', 'Dolores id ullam quo ipsam aut quisquam. Enim doloribus eos deserunt cum sit. Sunt in ea et ex aut.', 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(9, 'jensen-ward-6909b71544014', 1, 'Carlos', 'Quispe', NULL, 1, '55583853', 'M', '1982-01-16', 42, '966160511', 'dayna47@example.com', 'Av. Arequipa 273, Surco, Lima', 'Real Estate Broker', 'Single', 'AB+', 'Lou Auer', '360.286.6214', 'Qui ut et aut saepe et sint dolor debitis.', NULL, NULL, NULL, 'Sit doloribus omnis totam ipsum ut.', NULL, 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(10, 'genevieve-ziemann-6909b71544873', 1, 'Juan', 'Diaz', NULL, 1, '96956727', 'Other', '1971-04-29', 43, '956899918', 'ola.wolf@example.net', 'Jr. de la Union 393, Surco, Lima', 'Product Safety Engineer', 'Divorced', 'A-', 'Dr. Trever Steuber DVM', '+17575037682', NULL, 'Optio impedit voluptatem recusandae aut et.', NULL, 'Labore dolorem unde dolorum consequatur at fuga est ut.', NULL, NULL, 1, '2025-11-04 06:01:00', '2025-11-04 08:22:09', NULL, NULL, NULL, NULL, NULL),
+	(11, 'michi-uwu-6909c7d661a4f', 1, 'Michi', 'Uwu', NULL, 1, '70707070', 'F', NULL, NULL, NULL, 'michi@uwu.com', NULL, 'Mesera', 'Single', 'O+', 'Su mami', '+51 111111111', 'A las relaciones', 'No', 'No', NULL, NULL, NULL, 1, '2025-11-04 09:31:02', '2025-11-04 09:31:02', NULL, 3, NULL, NULL, NULL);
+
+-- Volcando estructura para tabla blog_db.permissions
+DROP TABLE IF EXISTS `permissions`;
+CREATE TABLE IF NOT EXISTS `permissions` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.permissions: ~39 rows (aproximadamente)
+REPLACE INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
+	(1, 'countries.view', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(2, 'countries.create', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(3, 'countries.edit', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(4, 'countries.delete', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(5, 'countries.export', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(6, 'countries.edit_all', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(7, 'users.view', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(8, 'users.create', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(9, 'users.edit', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(10, 'users.delete', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(11, 'users.export', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(12, 'users.edit_all', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(13, 'companies.view', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(14, 'companies.create', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(15, 'companies.edit', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(16, 'companies.delete', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(17, 'companies.export', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(18, 'companies.edit_all', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(19, 'languages.view', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(20, 'languages.create', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(21, 'languages.edit', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(22, 'languages.delete', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(23, 'languages.export', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(24, 'languages.edit_all', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(25, 'tenants.view', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(26, 'tenants.create', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(27, 'tenants.edit', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(28, 'tenants.delete', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(29, 'tenants.export', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(30, 'tenants.edit_all', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(31, 'regions.view', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(32, 'regions.create', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(33, 'regions.edit', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(34, 'regions.delete', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(35, 'regions.export', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(36, 'regions.edit_all', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58'),
+	(37, 'countries.show', 'web', '2025-11-04 14:37:59', '2025-11-04 14:37:59'),
+	(38, 'users.show', 'web', '2025-11-04 14:37:59', '2025-11-04 14:37:59'),
+	(39, 'companies.show', 'web', '2025-11-04 14:37:59', '2025-11-04 14:37:59');
+
+-- Volcando estructura para tabla blog_db.personal_access_tokens
+DROP TABLE IF EXISTS `personal_access_tokens`;
+CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint unsigned NOT NULL,
+  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`),
+  KEY `personal_access_tokens_expires_at_index` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.personal_access_tokens: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.procedures
+DROP TABLE IF EXISTS `procedures`;
+CREATE TABLE IF NOT EXISTS `procedures` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `category` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `base_price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `duration_minutes` int NOT NULL DEFAULT '30',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_by` bigint unsigned DEFAULT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `procedures_code_unique` (`code`),
+  UNIQUE KEY `procedures_slug_unique` (`slug`),
+  KEY `procedures_created_by_foreign` (`created_by`),
+  KEY `procedures_updated_by_foreign` (`updated_by`),
+  KEY `procedures_deleted_by_foreign` (`deleted_by`),
+  CONSTRAINT `procedures_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `procedures_deleted_by_foreign` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `procedures_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.procedures: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.regions
+DROP TABLE IF EXISTS `regions`;
+CREATE TABLE IF NOT EXISTS `regions` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `regions_slug_unique` (`slug`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.regions: ~3 rows (aproximadamente)
+REPLACE INTO `regions` (`id`, `slug`, `name`, `is_active`, `created_by`, `deleted_by`, `deleted_description`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	(1, '9yOVgBL1J9PhoywxipGkVY', 'América del Sur', 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(2, 'Dj3VN0xd5pz3WfYi6CSg14', 'América del Norte', 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(3, 'KziuGSsZkiCupFaCdObFFo', 'Europa', 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL);
+
+-- Volcando estructura para tabla blog_db.roles
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE IF NOT EXISTS `roles` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`),
+  UNIQUE KEY `roles_slug_unique` (`slug`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.roles: ~6 rows (aproximadamente)
+REPLACE INTO `roles` (`id`, `name`, `slug`, `description`, `guard_name`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	(1, 'super', NULL, 'Super Admin: Full Access', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(2, 'admin', NULL, 'Tenant Administrator', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(3, 'user', NULL, 'User with profiles', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(4, 'language_manager', NULL, 'Manages system languages', 'web', '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(5, 'Dentist', NULL, 'Dentist Role', 'web', '2025-11-04 14:38:53', '2025-11-04 14:38:53', NULL),
+	(6, 'Patient', NULL, 'Patient Role', 'web', '2025-11-04 14:38:53', '2025-11-04 14:38:53', NULL);
+
+-- Volcando estructura para tabla blog_db.role_has_permissions
+DROP TABLE IF EXISTS `role_has_permissions`;
+CREATE TABLE IF NOT EXISTS `role_has_permissions` (
+  `permission_id` bigint unsigned NOT NULL,
+  `role_id` bigint unsigned NOT NULL,
+  PRIMARY KEY (`permission_id`,`role_id`),
+  KEY `role_has_permissions_role_id_foreign` (`role_id`),
+  CONSTRAINT `role_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `role_has_permissions_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.role_has_permissions: ~86 rows (aproximadamente)
+REPLACE INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
+	(1, 1),
+	(2, 1),
+	(3, 1),
+	(4, 1),
+	(5, 1),
+	(6, 1),
+	(7, 1),
+	(8, 1),
+	(9, 1),
+	(10, 1),
+	(11, 1),
+	(12, 1),
+	(13, 1),
+	(14, 1),
+	(15, 1),
+	(16, 1),
+	(17, 1),
+	(18, 1),
+	(19, 1),
+	(20, 1),
+	(21, 1),
+	(22, 1),
+	(23, 1),
+	(24, 1),
+	(25, 1),
+	(26, 1),
+	(27, 1),
+	(28, 1),
+	(29, 1),
+	(30, 1),
+	(31, 1),
+	(32, 1),
+	(33, 1),
+	(34, 1),
+	(35, 1),
+	(36, 1),
+	(37, 1),
+	(38, 1),
+	(39, 1),
+	(1, 2),
+	(2, 2),
+	(3, 2),
+	(4, 2),
+	(5, 2),
+	(6, 2),
+	(7, 2),
+	(8, 2),
+	(9, 2),
+	(10, 2),
+	(11, 2),
+	(12, 2),
+	(13, 2),
+	(14, 2),
+	(15, 2),
+	(16, 2),
+	(17, 2),
+	(18, 2),
+	(19, 2),
+	(20, 2),
+	(21, 2),
+	(22, 2),
+	(23, 2),
+	(24, 2),
+	(25, 2),
+	(26, 2),
+	(27, 2),
+	(28, 2),
+	(29, 2),
+	(30, 2),
+	(31, 2),
+	(32, 2),
+	(33, 2),
+	(34, 2),
+	(35, 2),
+	(36, 2),
+	(37, 2),
+	(38, 2),
+	(39, 2),
+	(1, 3),
+	(37, 3),
+	(19, 4),
+	(20, 4),
+	(21, 4),
+	(22, 4),
+	(23, 4),
+	(24, 4);
+
+-- Volcando estructura para tabla blog_db.sessions
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint unsigned DEFAULT NULL,
+  `ip_address` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_user_id_index` (`user_id`),
+  KEY `sessions_last_activity_index` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.sessions: ~4 rows (aproximadamente)
+REPLACE INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+	('5vCBOCUzhSNUGfDUmPEvbI8Bli7eFSY90fZ5C6XB', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiNDJPcEZWSElqWmsyOTlxbDRGOEk1SFUzWElnZTY3YjI2OVZlZ2lycyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyMToiaHR0cDovLzEyNy4wLjAuMTo4MDAwIjt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9lcy9kZW50YWxfbWFuYWdlbWVudC9kZW50aXN0cyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NjoibG9jYWxlIjtzOjI6ImVzIjtzOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1762249281),
+	('d9DaRWBSL5B4ohX3B97P36JnfhUuUxiyNA6IlSha', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoic2VUS1ZJa2JkdGU1SkZvdWxHdU9DODR1Wmg5SUw0OXNhZTNoMEROSCI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyMToiaHR0cDovLzEyNy4wLjAuMTo4MDAwIjt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTg6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9lcy9kZW50YWxfbWFuYWdlbWVudC9wYXRpZW50cz9wYWdlPTEiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6ImxvY2FsZSI7czoyOiJlcyI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mzt9', 1762313723),
+	('l8rrqjeTkrQLb2MrVLsEn1TeZguG9ka80JJmhUbz', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMjB3M2hVNWxoU1RERzUxbDBNZTVlelpoVG96b0lhTXo4MThPRHVDRCI7czo2OiJsb2NhbGUiO3M6MjoiZXMiO3M6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjUxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZXMvZGVudGFsX21hbmFnZW1lbnQvcGF0aWVudHMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1762247011),
+	('NkH9shmNAGRzSL1U0hYIw3PRZsVojWTce3rWWsz7', 5, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiU1dUTUY2OTVsNm5vWlpqMkVwM1dtcjVTd1JXYlFPSndaRUNiSnc0cyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo1NjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2VzL2Rhc2hib2FyZF9tYW5hZ2VtZW50L2Rhc2hib2FyZHMiO31zOjk6Il9wcmV2aW91cyI7YToyOntzOjM6InVybCI7czo1NjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2VzL2Rhc2hib2FyZF9tYW5hZ2VtZW50L2Rhc2hib2FyZHMiO3M6NToicm91dGUiO3M6Mzc6ImRhc2hib2FyZF9tYW5hZ2VtZW50LmRhc2hib2FyZHMuaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6ImxvY2FsZSI7czoyOiJlcyI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NTt9', 1762357244);
+
+-- Volcando estructura para tabla blog_db.settings
+DROP TABLE IF EXISTS `settings`;
+CREATE TABLE IF NOT EXISTS `settings` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `settings_slug_unique` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.settings: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.system_modules
+DROP TABLE IF EXISTS `system_modules`;
+CREATE TABLE IF NOT EXISTS `system_modules` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `permission_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `system_modules_slug_unique` (`slug`),
+  UNIQUE KEY `system_modules_permission_key_unique` (`permission_key`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.system_modules: ~3 rows (aproximadamente)
+REPLACE INTO `system_modules` (`id`, `slug`, `name`, `permission_key`, `created_by`, `deleted_by`, `deleted_description`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	(1, 'kRoY1aWJEnY9sxCVMB2uCI', 'Country', 'countries', 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(2, 'E67ktuIGsrwcVJtkI7KTtB', 'User', 'users', 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(3, '74WLt00DqzOUHlXYm4AcRz', 'Company', 'companies', 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL);
+
+-- Volcando estructura para tabla blog_db.tenants
+DROP TABLE IF EXISTS `tenants`;
+CREATE TABLE IF NOT EXISTS `tenants` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `api_token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tenants_slug_unique` (`slug`),
+  UNIQUE KEY `tenants_api_token_unique` (`api_token`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.tenants: ~2 rows (aproximadamente)
+REPLACE INTO `tenants` (`id`, `api_token`, `slug`, `name`, `logo`, `is_active`, `created_by`, `deleted_by`, `deleted_description`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	(1, NULL, 'krCOIogyPuZfL10kC1ntGv', 'HITACHI ENERGY', NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(2, NULL, 'q8xD7GBCnyAiFXw5VaaP5p', 'SIEMBRES', NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL);
+
+-- Volcando estructura para tabla blog_db.tenant_countries
+DROP TABLE IF EXISTS `tenant_countries`;
+CREATE TABLE IF NOT EXISTS `tenant_countries` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` bigint unsigned DEFAULT NULL,
+  `country_id` bigint unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.tenant_countries: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.treatments
+DROP TABLE IF EXISTS `treatments`;
+CREATE TABLE IF NOT EXISTS `treatments` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `patient_id` int unsigned NOT NULL,
+  `dentist_id` bigint unsigned NOT NULL,
+  `appointment_id` bigint unsigned DEFAULT NULL,
+  `treatment_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `tooth_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treatment_date` date NOT NULL,
+  `cost` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Pending',
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_by` bigint unsigned DEFAULT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `treatments_slug_unique` (`slug`),
+  KEY `treatments_patient_id_foreign` (`patient_id`),
+  KEY `treatments_dentist_id_foreign` (`dentist_id`),
+  KEY `treatments_appointment_id_foreign` (`appointment_id`),
+  KEY `treatments_created_by_foreign` (`created_by`),
+  KEY `treatments_updated_by_foreign` (`updated_by`),
+  KEY `treatments_deleted_by_foreign` (`deleted_by`),
+  CONSTRAINT `treatments_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `treatments_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `treatments_deleted_by_foreign` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `treatments_dentist_id_foreign` FOREIGN KEY (`dentist_id`) REFERENCES `dentists` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `treatments_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `treatments_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.treatments: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla blog_db.users
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tenant_id` bigint unsigned NOT NULL,
+  `country_id` bigint unsigned NOT NULL,
+  `locale_id` bigint unsigned NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `google_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `photo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_by` bigint unsigned DEFAULT NULL,
+  `deleted_by` bigint unsigned DEFAULT NULL,
+  `deleted_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_slug_unique` (`slug`),
+  UNIQUE KEY `users_email_unique` (`email`),
+  UNIQUE KEY `users_google_id_unique` (`google_id`),
+  KEY `users_tenant_id_foreign` (`tenant_id`),
+  KEY `users_country_id_foreign` (`country_id`),
+  KEY `users_locale_id_foreign` (`locale_id`),
+  KEY `users_created_by_foreign` (`created_by`),
+  KEY `users_deleted_by_foreign` (`deleted_by`),
+  CONSTRAINT `users_country_id_foreign` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`),
+  CONSTRAINT `users_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `users_deleted_by_foreign` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `users_locale_id_foreign` FOREIGN KEY (`locale_id`) REFERENCES `locales` (`id`),
+  CONSTRAINT `users_tenant_id_foreign` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla blog_db.users: ~14 rows (aproximadamente)
+REPLACE INTO `users` (`id`, `slug`, `tenant_id`, `country_id`, `locale_id`, `email`, `google_id`, `password`, `name`, `photo`, `remember_token`, `email_verified_at`, `is_active`, `created_by`, `deleted_by`, `deleted_description`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	(1, 'UKFFU9vMkOj1AhHbFSRH8e', 1, 1, 1, 'pingo@gmail.com', NULL, '$2y$12$LfuYMFtq6OUZNWg4UXfJFeg7EiQK4rqLJFjJO.UYuWFmGiuIJL0D6', 'Alexander Pingo', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(2, 'tvpb6z4Zu3a5o3EuZr9M3l', 1, 1, 1, 'pinga@gmail.com', NULL, '$2y$12$aqTDmkU/5ouU4kbZjqtpXOBJ5cd5cuhEU6ok1Th/k9tFV4uSIRS3S', 'Manuela Pinga', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:58', '2025-11-04 11:00:58', NULL),
+	(3, 'ubq7df7NeQCywyz5ASHNXj', 1, 1, 1, 'joel@gmail.com', NULL, '$2y$12$o.3y8ztjwz/fhK99caJDQ.qc3iA/u0DMnjgW7gP5bMmyT7kEtxTcC', 'Joel Jimenez', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:59', '2025-11-04 11:00:59', NULL),
+	(4, '5XNpSAmk5mzcomn6kzXsfy', 1, 1, 1, 'kiara@gmail.com', NULL, '$2y$12$7FG/F0Hw9VgPz1/Ydb/NmuPpzq/STdM1RosEz1Z4RyX7ojR2ep1.a', 'Yunikua', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:59', '2025-11-04 11:00:59', NULL),
+	(5, 'iG6ntz07IxgNszjv1jJljw', 1, 1, 1, 'misari@gmail.com', NULL, '$2y$12$CYItzJNwVqRLxluv9HtbBezG8C4pxfRqtMl2A52Ev3lxrHcMG5qJC', 'Tayron Misari', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:59', '2025-11-04 11:00:59', NULL),
+	(6, 'choYZYgbqPIUkLfmFQ8yi8', 1, 1, 1, 'yasumy@gmail.com', NULL, '$2y$12$HfrEc9GK.m.TDiWweO9cdunss9vRT/h9fJLDsGoRm/zJXRNcgjVrC', 'Yasumy Pastor', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:59', '2025-11-04 11:00:59', NULL),
+	(7, 'WbOwiRKcNKawvfM5rXq2IM', 1, 1, 1, 'nerio@gmail.com', NULL, '$2y$12$hjxJvA6VLXu4/x/xRJqE7OTnvGAZMUgK0.4l1jMlIjVBohtzCsyRK', 'Nerio Vasquez', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:59', '2025-11-04 11:00:59', NULL),
+	(8, 'JqIm638TrKxbPweAaVUisg', 1, 1, 1, 'jhon@gmail.com', NULL, '$2y$12$jh0GFesGkW0bJ2oti4K1muxdWA4C/ruG5xG.wgCPstNqsO962sQH6', 'Jhon Pastor', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:59', '2025-11-04 11:00:59', NULL),
+	(9, '8SidCSv376bVOu3FChpG3T', 1, 1, 1, 'jose@gmail.com', NULL, '$2y$12$cB9uYHwKx2kR32hV7Q50i.pA01j0wAFtFDorHuBpv3imvnSYnnqXy', 'Jose de los Bayardigans', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:00:59', '2025-11-04 11:00:59', NULL),
+	(10, 'PjJlEgvfncdUhJNiZG83Mr', 1, 1, 1, 'boris@gmail.com', NULL, '$2y$12$q6p5p9EMD19fgi7EDAY1l.822STLpl2JMZiyr1xeetX/nubkomoZy', 'Boris el Varon', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:01:00', '2025-11-04 11:01:00', NULL),
+	(11, 'fcDJB65kJ7HZ2LXIsRIHFi', 1, 1, 1, 'jefferson@gmail.com', NULL, '$2y$12$hZqfWsge1WaN6uHCiwPtfektcYenfObE0/8LC50Bo7nf3HCBSRJJS', 'Jefferson el Delegado', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:01:00', '2025-11-04 11:01:00', NULL),
+	(12, '7jVz1qD4XgPSz2pVK8OcYq', 1, 1, 1, 'fabio@gmail.com', NULL, '$2y$12$DAN4y6FeMQuqyT.PHPp48OHoUGtgltOQA9e9Hwcvi3PzVg7CXP4Ri', 'Pampis de Tiktok', NULL, NULL, NULL, 1, 1, NULL, NULL, '2025-11-04 11:01:00', '2025-11-04 11:01:00', NULL),
+	(13, 'wdnFQOJh7KaovgaM0wAdvX', 1, 1, 1, 'Fenix@homo.com', NULL, '$2y$12$1CunKmEsc6gEjvEZrbbc/eyoHrTf8sVhZE9IqZFio8CTjONZnM0aq', 'Fenix', NULL, NULL, NULL, 1, NULL, NULL, NULL, '2025-11-04 14:37:05', '2025-11-04 14:37:05', NULL),
+	(14, 'uDORO2XVxFSNaFJVitRJC3', 1, 1, 1, 'Fenix@dentista.com', NULL, '$2y$12$xLTkRIt3LhxaU44GqUkYc.odhNmwYrkChxx5LrwBtqI372GjgIyva', 'Fenix', NULL, NULL, NULL, 1, NULL, NULL, NULL, '2025-11-04 14:41:21', '2025-11-04 14:41:21', NULL);
+
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
