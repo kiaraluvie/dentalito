@@ -132,7 +132,8 @@
             <!-- Odontogram -->
             @can('odontogram.view')
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('dental_management.patients.index') }}"
+                   class="nav-link {{ activeClass(['dental_management/patients*']) }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>{{ __('sidebar.odontogram') }}</p>
                 </a>
