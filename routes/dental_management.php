@@ -7,6 +7,7 @@ use App\Http\Controllers\DentalManagement\TreatmentController;
 use App\Http\Controllers\DentalManagement\MedicalHistoryController;
 use App\Http\Controllers\DentalManagement\DentistController;
 use App\Http\Controllers\DentalManagement\AppointmentController;
+use App\Http\Controllers\DentalManagement\OdontogramController;
 use App\Http\Controllers\DentalManagement\SpecialtyController;
 
 
@@ -18,6 +19,13 @@ Route::prefix('dental_management')->name('dental_management.')->middleware(['aut
     Route::resource('patients', PatientController::class)->names('patients');
     Route::get('patients/{patient}/delete', [PatientController::class, 'delete'])->name('patients.delete');
     Route::delete('patients/{patient}/deleteSave', [PatientController::class, 'deleteSave'])->name('patients.deleteSave');
+
+    // ------------------------------
+    // Odontogram
+    // ------------------------------
+    Route::get('patients/{patient}/odontogram', [OdontogramController::class, 'show'])->name('patients.odontogram.show');
+    Route::post('patients/{patient}/odontogram', [OdontogramController::class, 'store'])->name('patients.odontogram.store');
+    Route::patch('patients/{patient}/odontogram/{odontogram}', [OdontogramController::class, 'update'])->name('patients.odontogram.update');
 
     // ------------------------------
     // Procedures
